@@ -109,7 +109,7 @@ function Pay() {
     <div style={{ backgroundColor: "#161616" }}>
       <Container className="vh-100 gap-4 text-white">
         <div className="position-absolute top-50 start-50 translate-middle text-center">
-          {premium !== 0 && startdate < newdate ? (
+          {premium !== 0 && startdate < newdate && status === "Success" ? (
             <div className="fw-bold text-success" style={{ fontSize: "36px" }}>
               Premium
             </div>
