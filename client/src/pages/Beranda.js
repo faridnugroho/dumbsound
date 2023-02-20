@@ -17,6 +17,24 @@ const Beranda = () => {
   });
   console.log("ini data musics", musics);
 
+  const { data: premium } = useQuery("premiumCache", async () => {
+    const response = await API.get("/transactionId");
+    console.log("ini response premium", response);
+    return response.data.data.length;
+  });
+  console.log("ini data response premium", premium);
+
+  const { data: duedate } = useQuery("duedateCache", async () => {
+    const response = await API.get("/transactionId");
+    console.log("ini response duedate", response);
+    return response.data.data[0].duedate;
+  });
+  const newdate = new Date(duedate);
+
+  console.log("ini tanggal newdate", newdate);
+
+  const startdate = new Date();
+
   return (
     <>
       <div className="position-relative">
@@ -63,33 +81,65 @@ const Beranda = () => {
               return (
                 <Col key={index}>
                   {localStorage.getItem("token") ? (
-                    <Link
-                      className="text-decoration-none"
-                      to={/music/ + item.id}
-                    >
-                      <Card className="bg-dark h-100 p-3">
-                        <div className="d-flex h-100 justify-content-center">
-                          <Card.Img
-                            variant="top"
-                            src={item.thumbnail}
-                            className="rounded"
-                          />
-                        </div>
-                        <Card.Body className="p-0 mt-3">
-                          <div className="d-flex justify-content-between">
-                            <Card.Title className="text-white">
-                              {item.title}
-                            </Card.Title>
-                            <Card.Text className="text-white">
-                              {item.year}
-                            </Card.Text>
-                          </div>
-                          <Card.Text className="text-secondary">
-                            {item.artist.name}
-                          </Card.Text>
-                        </Card.Body>
-                      </Card>
-                    </Link>
+                    <>
+                      {premium !== 0 && startdate < newdate ? (
+                        <Link
+                          className="text-decoration-none"
+                          to={/music/ + item.id}
+                        >
+                          <Card className="bg-dark h-100 p-3">
+                            <div className="d-flex h-100 justify-content-center">
+                              <Card.Img
+                                variant="top"
+                                src={item.thumbnail}
+                                className="rounded"
+                              />
+                            </div>
+                            <Card.Body className="p-0 mt-3">
+                              <div className="d-flex justify-content-between">
+                                <Card.Title className="text-white">
+                                  {item.title}
+                                </Card.Title>
+                                <Card.Text className="text-white">
+                                  {item.year}
+                                </Card.Text>
+                              </div>
+                              <Card.Text className="text-secondary">
+                                {item.artist.name}
+                              </Card.Text>
+                            </Card.Body>
+                          </Card>
+                        </Link>
+                      ) : (
+                        <Link
+                          className="text-decoration-none"
+                          to={/music/ + item.id}
+                        >
+                          <Card className="bg-dark h-100 p-3">
+                            <div className="d-flex h-100 justify-content-center">
+                              <Card.Img
+                                variant="top"
+                                src={item.thumbnail}
+                                className="rounded"
+                              />
+                            </div>
+                            <Card.Body className="p-0 mt-3">
+                              <div className="d-flex justify-content-between">
+                                <Card.Title className="text-white">
+                                  {item.title}
+                                </Card.Title>
+                                <Card.Text className="text-white">
+                                  {item.year}
+                                </Card.Text>
+                              </div>
+                              <Card.Text className="text-secondary">
+                                {item.artist.name}
+                              </Card.Text>
+                            </Card.Body>
+                          </Card>
+                        </Link>
+                      )}
+                    </>
                   ) : (
                     <Link
                       className="text-decoration-none"

@@ -17,7 +17,7 @@ import icon_logout from "../assets/icon_logout.png";
 import icon_pay from "../assets/icon_pay.png";
 import profile from "../assets/profile.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "react-query";
+import { useMutation } from "react-query";
 import { API } from "../config/api";
 import { UserContext } from "../context/userContext";
 import { RoomsContext } from "../context/roomsContext";
@@ -57,7 +57,7 @@ function Navbars() {
 
   // Register
   const [register, setRegister] = useState({
-    roleid: "",
+    roleid: "2",
     fullname: "",
     email: "",
     password: "",
@@ -243,10 +243,10 @@ function Navbars() {
   );
 
   // Role
-  let { data: roles } = useQuery("rolesCache", async () => {
-    const response = await API.get("/roles");
-    return response.data.data;
-  });
+  // let { data: roles } = useQuery("rolesCache", async () => {
+  //   const response = await API.get("/roles");
+  //   return response.data.data;
+  // });
 
   return (
     <>
@@ -431,7 +431,7 @@ function Navbars() {
                 style={{ backgroundColor: "#454545" }}
               />
             </Form.Group>
-            <Form.Group className="mb-4" controlId="roleid">
+            {/* <Form.Group className="mb-4" controlId="roleid">
               <Form.Select
                 name="roleid"
                 style={{ backgroundColor: "#454545" }}
@@ -445,7 +445,7 @@ function Navbars() {
                   </option>
                 ))}
               </Form.Select>
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group className="mb-4">
               <Form.Select
                 name="gender"
