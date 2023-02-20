@@ -64,10 +64,10 @@ func UploadMusic(next http.HandlerFunc) http.HandlerFunc {
 		tempFile.Write(fileBytes)
 
 		data := tempFile.Name()
-		musicFile := data[8:] // split uploads/
+		// musicFile := data[8:] // split uploads/
 
 		// add filename to ctx
-		ctx := context.WithValue(r.Context(), "dataMusic", musicFile)
+		ctx := context.WithValue(r.Context(), "dataMusic", data)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

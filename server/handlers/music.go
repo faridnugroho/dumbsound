@@ -1,15 +1,19 @@
 package handlers
 
 import (
+	"context"
 	musicdto "dumbsound/dto/music"
 	dto "dumbsound/dto/result"
 	"dumbsound/models"
 	"dumbsound/repositories"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
@@ -31,10 +35,10 @@ func (h *handlerMusic) FindMusics(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err.Error())
 	}
 
-	for i, p := range musics {
-		musics[i].Thumbnail = os.Getenv("PATH_FILE") + p.Thumbnail
-		musics[i].Attache = os.Getenv("PATH_FILE") + p.Attache
-	}
+	// for i, p := range musics {
+	// 	musics[i].Thumbnail = os.Getenv("PATH_FILE") + p.Thumbnail
+	// 	musics[i].Attache = os.Getenv("PATH_FILE") + p.Attache
+	// }
 
 	// for i, p := range musics {
 	// 	imagePath := os.Getenv("PATH_FILE") + p.Thumbnail
@@ -65,8 +69,8 @@ func (h *handlerMusic) GetMusic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	music.Thumbnail = os.Getenv("PATH_FILE") + music.Thumbnail
-	music.Attache = os.Getenv("PATH_FILE") + music.Attache
+	// music.Thumbnail = os.Getenv("PATH_FILE") + music.Thumbnail
+	// music.Attache = os.Getenv("PATH_FILE") + music.Attache
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: music}
@@ -78,11 +82,11 @@ func (h *handlerMusic) CreateMusic(w http.ResponseWriter, r *http.Request) {
 
 	// Thumbnail
 	dataContex := r.Context().Value("dataFile")
-	filename := dataContex.(string)
+	filepaththumb := dataContex.(string)
 
 	// Music
 	dataMusicContext := r.Context().Value("dataMusic")
-	musicFile := dataMusicContext.(string)
+	filepathmusic := dataMusicContext.(string)
 
 	artistid, _ := strconv.Atoi(r.FormValue("artistid"))
 	request := musicdto.CreateMusicRequest{
@@ -100,13 +104,30 @@ func (h *handlerMusic) CreateMusic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	resp, err := cld.Upload.Upload(ctx, filepaththumb, uploader.UploadParams{Folder: "housy"})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	respp, err := cld.Upload.Upload(ctx, filepathmusic, uploader.UploadParams{Folder: "housy"})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	music := models.Music{
 		ArtistID:  request.ArtistID,
 		Artist:    request.Artist,
 		Title:     request.Title,
 		Year:      request.Year,
-		Thumbnail: filename,
-		Attache:   musicFile,
+		Thumbnail: resp.SecureURL,
+		Attache:   respp.SecureURL,
 	}
 
 	data, err := h.MusicRepository.CreateMusic(music)
