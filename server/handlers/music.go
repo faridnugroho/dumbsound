@@ -40,16 +40,16 @@ func (h *handlerMusic) FindMusics(w http.ResponseWriter, r *http.Request) {
 	// 	musics[i].Attache = os.Getenv("PATH_FILE") + p.Attache
 	// }
 
-	// for i, p := range musics {
-	// 	imagePath := os.Getenv("PATH_FILE") + p.Thumbnail
-	// 	musics[i].Thumbnail = imagePath
+	for i, p := range musics {
+		imagePath := os.Getenv("PATH_FILE") + p.Thumbnail
+		musics[i].Thumbnail = imagePath
 
-	// }
+	}
 
-	// for i, p := range musics {
-	// 	musicPath := os.Getenv("PATH_FILE") + p.Attache
-	// 	musics[i].Attache = musicPath
-	// }
+	for i, p := range musics {
+		musicPath := os.Getenv("PATH_FILE") + p.Attache
+		musics[i].Attache = musicPath
+	}
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: musics}
@@ -69,8 +69,8 @@ func (h *handlerMusic) GetMusic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// music.Thumbnail = os.Getenv("PATH_FILE") + music.Thumbnail
-	// music.Attache = os.Getenv("PATH_FILE") + music.Attache
+	music.Thumbnail = os.Getenv("PATH_FILE") + music.Thumbnail
+	music.Attache = os.Getenv("PATH_FILE") + music.Attache
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: music}
