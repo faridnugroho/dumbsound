@@ -111,10 +111,7 @@ const Beranda = () => {
                           </Card>
                         </Link>
                       ) : (
-                        <Link
-                          className="text-decoration-none"
-                          to={/music/ + item.id}
-                        >
+                        <Link className="text-decoration-none" to="/pay">
                           <Card className="bg-dark h-100 p-3">
                             <div className="d-flex h-100 justify-content-center">
                               <Card.Img
