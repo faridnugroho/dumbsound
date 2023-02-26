@@ -174,6 +174,11 @@ func (h *handlerTransaction) UpdateTransaction(w http.ResponseWriter, r *http.Re
 		transaction.StatusUser = request.StatusUser
 	}
 
+	date := request.DueDate.Format("Monday 02, January 2006 15:04 MST")
+	if date != "" {
+		transaction.DueDate = request.DueDate
+	}
+
 	data, err := h.TransactionRepository.UpdateTransaction(transaction)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -614,6 +619,7 @@ func (h *handlerTransaction) Notification(w http.ResponseWriter, r *http.Request
 	transactionStatus := notificationPayload["transaction_status"].(string)
 	fraudStatus := notificationPayload["fraud_status"].(string)
 	orderId := notificationPayload["order_id"].(string)
+	timeFailed := time.Now()
 
 	transaction, err := h.TransactionRepository.GetOneTransaction(orderId)
 	if err != nil {
@@ -630,6 +636,7 @@ func (h *handlerTransaction) Notification(w http.ResponseWriter, r *http.Request
 			SendMail("success", transaction)
 			h.TransactionRepository.UpdateTransactionNew("Pending", orderId)
 			h.TransactionRepository.UpdateTransactionStatusUser("Not Active", orderId)
+			h.TransactionRepository.UpdateTransactionDueDate(timeFailed, orderId)
 		} else if fraudStatus == "accept" {
 			// TODO set transaction status on your database to 'success'
 			SendMail("success", transaction)
@@ -647,16 +654,19 @@ func (h *handlerTransaction) Notification(w http.ResponseWriter, r *http.Request
 		SendMail("success", transaction)
 		h.TransactionRepository.UpdateTransactionNew("Failed", orderId)
 		h.TransactionRepository.UpdateTransactionStatusUser("Not Active", orderId)
+		h.TransactionRepository.UpdateTransactionDueDate(timeFailed, orderId)
 	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
 		// TODO set transaction status on your databaase to 'failure'
 		SendMail("success", transaction)
 		h.TransactionRepository.UpdateTransactionNew("Failed", orderId)
 		h.TransactionRepository.UpdateTransactionStatusUser("Not Active", orderId)
+		h.TransactionRepository.UpdateTransactionDueDate(timeFailed, orderId)
 	} else if transactionStatus == "pending" {
 		// TODO set transaction status on your databaase to 'pending' / waiting payment
 		SendMail("success", transaction)
 		h.TransactionRepository.UpdateTransactionNew("Pending", orderId)
 		h.TransactionRepository.UpdateTransactionStatusUser("Not Active", orderId)
+		h.TransactionRepository.UpdateTransactionDueDate(timeFailed, orderId)
 	}
 
 	w.WriteHeader(http.StatusOK)

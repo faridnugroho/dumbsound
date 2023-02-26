@@ -6,76 +6,63 @@ import jwt from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 function Pay() {
-  let history = useNavigate();
+  let navigate = useNavigate();
+
   const getToken = localStorage.getItem("token");
   const token = jwt(getToken);
 
   const { data: premium } = useQuery("premiumCache", async () => {
     const response = await API.get("/transactionId");
-    console.log("ini response premium", response);
     return response.data.data.length;
   });
-  console.log("ini data response premium", premium);
 
   const { data: status } = useQuery("statusCache", async () => {
     const response = await API.get("/transactionId");
-    console.log("ini response status", response);
-    return response.data.data[0].statuspayment;
+    const length = response.data.data.length;
+    return response.data.data[length - 1].statuspayment;
   });
 
-  console.log("ini data response status", status);
-
-  const { data: duedate } = useQuery("duedateCache", async () => {
+  const { data: dueDate } = useQuery("duedateCache", async () => {
     const response = await API.get("/transactionId");
-    console.log("ini response duedate", response);
-    return response.data.data[0].duedate;
+    const length = response.data.data.length;
+    return response.data.data[length - 1].duedate;
   });
-  const newdate = new Date(duedate);
+  const newDueDate = new Date(dueDate);
 
-  console.log("ini tanggal newdate", newdate);
+  const dateTimeNow = new Date();
 
   const { data: user } = useQuery("userCache", async () => {
     const response = await API.get("/user/" + token.id);
-    console.log("ini response user", response);
     return response.data.data;
   });
-
-  console.log("ini data response user", user);
-
-  const startdate = new Date();
-
-  console.log("ini tanggal sekarang", startdate);
 
   const handleTransaction = useMutation(async () => {
     try {
       const response = await API.post("/transaction", {
         userid: user.id,
-        startdate: startdate,
+        startdate: dateTimeNow,
+        duedate: dateTimeNow,
         statususer: "Not Active",
         statuspayment: "Pending",
       });
 
-      const tokenBaru = response.data.data.token;
-      console.log(
-        "habis add transaction tokennnnnn : ",
-        response.data.data.token
-      );
+      const newToken = response.data.data.token;
 
-      window.snap.pay(tokenBaru, {
+      window.snap.pay(newToken, {
         onSuccess: function (result) {
           /* You may add your own implementation here */
           console.log(result);
-          history("/pay");
+          navigate("/pay");
         },
         onPending: function (result) {
           /* You may add your own implementation here */
           console.log(result);
-          history("/pay");
+          navigate("/pay");
         },
         onError: function (result) {
           /* You may add your own implementation here */
           console.log(result);
-          history("/pay");
+          navigate("/pay");
         },
         onClose: function () {
           /* You may add your own implementation here */
@@ -109,7 +96,7 @@ function Pay() {
     <div style={{ backgroundColor: "#161616" }}>
       <Container className="vh-100 gap-4 text-white">
         <div className="position-absolute top-50 start-50 translate-middle text-center">
-          {premium !== 0 && startdate < newdate && status === "Success" ? (
+          {premium !== 0 && dateTimeNow < newDueDate && status === "Success" ? (
             <div className="fw-bold text-success" style={{ fontSize: "36px" }}>
               Premium
             </div>

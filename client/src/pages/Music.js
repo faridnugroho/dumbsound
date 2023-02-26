@@ -11,11 +11,8 @@ function Music() {
 
   const { data: music } = useQuery("musicCache", async () => {
     const response = await API.get("/music/" + id);
-    console.log("ini response user", response);
     return response.data.data;
   });
-
-  console.log("ini data response music by id", music);
 
   return (
     <>

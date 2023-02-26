@@ -10,30 +10,30 @@ import { RoomsContext } from "../context/roomsContext";
 const Beranda = () => {
   const { handleLoginShow } = useContext(RoomsContext);
 
-  // fetching data musics
   let { data: musics } = useQuery("musicsCache", async () => {
     const response = await API.get("/musics");
     return response.data.data;
   });
-  console.log("ini data musics", musics);
 
   const { data: premium } = useQuery("premiumCache", async () => {
     const response = await API.get("/transactionId");
-    console.log("ini response premium", response);
     return response.data.data.length;
   });
-  console.log("ini data response premium", premium);
 
-  const { data: duedate } = useQuery("duedateCache", async () => {
+  const { data: status } = useQuery("statusCache", async () => {
     const response = await API.get("/transactionId");
-    console.log("ini response duedate", response);
-    return response.data.data[0].duedate;
+    const length = response.data.data.length;
+    return response.data.data[length - 1].statuspayment;
   });
-  const newdate = new Date(duedate);
 
-  console.log("ini tanggal newdate", newdate);
+  const { data: dueDate } = useQuery("duedateCache", async () => {
+    const response = await API.get("/transactionId");
+    const length = response.data.data.length;
+    return response.data.data[length - 1].duedate;
+  });
+  const newDueDate = new Date(dueDate);
 
-  const startdate = new Date();
+  const dateTimeNow = new Date();
 
   return (
     <>
@@ -82,7 +82,9 @@ const Beranda = () => {
                 <Col key={index}>
                   {localStorage.getItem("token") ? (
                     <>
-                      {premium !== 0 && startdate < newdate ? (
+                      {premium !== 0 &&
+                      dateTimeNow < newDueDate &&
+                      status === "Success" ? (
                         <Link
                           className="text-decoration-none"
                           to={/music/ + item.id}

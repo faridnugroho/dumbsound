@@ -17,12 +17,6 @@ function AddArtist() {
       ...addArtist,
       [name]: type === "file" ? e.target.files : e.target.value,
     });
-
-    if (e.target.type === "file") {
-      let url = URL.createObjectURL(e.target.files[0]);
-      console.log("blob image", url);
-      // setPreview(url);
-    }
   };
 
   const handleAddArtist = useMutation(async (e) => {
@@ -36,16 +30,16 @@ function AddArtist() {
       formData.append("startcareer", addArtist.startcareer);
 
       const response = await API.post("/artist", formData);
-      console.log("berhasil menambahkan artist", response);
-      alert("berhasil menambahkan artist");
+      console.log("Successfully added artist", response);
+
+      alert("Successfully added artist");
 
       addArtist.name = "";
       addArtist.old = "";
       addArtist.type = "";
       addArtist.startcareer = "";
     } catch (error) {
-      alert("gagal menambahkan artist");
-      console.log(error);
+      alert("Failed to add artist");
     }
   });
 

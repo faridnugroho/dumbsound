@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"dumbsound/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -14,6 +15,7 @@ type TransactionRepository interface {
 	UpdateTransaction(transaction models.Transaction) (models.Transaction, error)
 	UpdateTransactionNew(status string, ID string) error
 	UpdateTransactionStatusUser(status string, ID string) error
+	UpdateTransactionDueDate(status time.Time, ID string) error
 	DeleteTransaction(transaction models.Transaction) (models.Transaction, error)
 	FindTransactionByID(userId int) ([]models.Transaction, error)
 }
@@ -84,6 +86,17 @@ func (r *repository) UpdateTransactionStatusUser(status string, ID string) error
 	r.db.Preload("User").First(&transaction, ID)
 
 	transaction.StatusUser = status
+
+	err := r.db.Save(&transaction).Error
+
+	return err
+}
+
+func (r *repository) UpdateTransactionDueDate(timeFailed time.Time, ID string) error {
+	var transaction models.Transaction
+	r.db.Preload("User").First(&transaction, ID)
+
+	transaction.DueDate = timeFailed
 
 	err := r.db.Save(&transaction).Error
 

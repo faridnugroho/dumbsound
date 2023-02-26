@@ -17,6 +17,7 @@ type CreateTransactionRequest struct {
 }
 
 type UpdateTransactionRequest struct {
-	StatusUser    string `json:"statususer" gorm:"type: varchar(255)"`
-	StatusPayment string `json:"statuspayment" gorm:"type: varchar(255)"`
+	StatusUser    string    `json:"statususer" gorm:"type: varchar(255)"`
+	StatusPayment string    `json:"statuspayment" gorm:"type: varchar(255)"`
+	DueDate       time.Time `json:"duedate"`
 }

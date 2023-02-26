@@ -20,14 +20,6 @@ function AddMusic() {
       ...addMusic,
       [name]: type === "file" ? e.target.files : e.target.value,
     });
-
-    if (e.target.type === "file") {
-      let url = URL.createObjectURL(e.target.files[0]);
-      console.log("blob image", url);
-      // setPreview(url);
-    }
-    console.log("ini target value", e.target.value);
-    console.log("ini target files", e.target.files);
   };
 
   const handleAddMusic = useMutation(async (e) => {
@@ -42,9 +34,9 @@ function AddMusic() {
       formData.append("attache", addMusic.attache[0]);
 
       const response = await API.post("/music", formData);
-      console.log("berhasil menambahkan music", response);
+      console.log("Successfully added musics", response);
 
-      alert("berhasil menambahkan music");
+      alert("Successfully added musics");
 
       addMusic.artistid = "";
       addMusic.thumbnail = "";
@@ -52,8 +44,7 @@ function AddMusic() {
       addMusic.year = "";
       addMusic.attache = "";
     } catch (error) {
-      alert("gagal menambahkan music");
-      console.log(error);
+      alert("Failed to add music");
     }
   });
 

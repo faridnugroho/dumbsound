@@ -7,11 +7,10 @@ import Moment from "react-moment";
 function Pay() {
   const { data: transactions } = useQuery("transactionsCache", async () => {
     const response = await API.get("/transactions");
-    console.log(response);
     return response.data.data;
   });
   return (
-    <div style={{ backgroundColor: "#161616" }} className="py-5 vh-100">
+    <div style={{ backgroundColor: "#161616" }} className="py-5 min-vh-100">
       <Container className="pt-5">
         <h2 className="text-white mb-4">Incoming Transaction</h2>
         <Table striped hover className="mb-5">
