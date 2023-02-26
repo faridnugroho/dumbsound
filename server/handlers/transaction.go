@@ -564,11 +564,9 @@ func SendMail(status string, transaction models.Transaction) {
 								  <td align="left">
 									<table role="presentation" border="0" cellpadding="0" cellspacing="0">
 									  <tbody>
-										<tr>
-										  <td> Product Name : %s </td><br>
-										  <td> Price : %s </td><br>
-										  <td> Status : %s </td>
-										</tr>
+									  	<tr> Product Name : %s </tr>
+										<tr> Price : %s </tr>
+										<tr> Status : %s </tr>
 									  </tbody>
 									</table>
 								  </td>
