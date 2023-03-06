@@ -33,6 +33,7 @@ const AllMusic = () => {
 
   return (
     <div
+      className="min-vh-100"
       style={{
         backgroundColor: "#161616",
         paddingTop: "8rem",
